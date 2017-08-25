@@ -494,6 +494,7 @@ namespace NI_Data_Collector
             this.tbStartWithWin.TabIndex = 26;
             this.tbStartWithWin.Text = "Run at startup";
             this.tbStartWithWin.UseVisualStyleBackColor = true;
+            this.tbStartWithWin.CheckedChanged += new System.EventHandler(this.tbStartWithWin_CheckedChanged);
             // 
             // Form1
             // 

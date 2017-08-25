@@ -1107,16 +1107,20 @@ namespace NI_Data_Collector
             if (userChoice == DialogResult.Yes)
             {
                 storeData();
-                setStartup();
             }
             else if (userChoice == DialogResult.No)
             {
-                setStartup();
+                //Do nothing and exit
             }
             else
             {
                 e.Cancel = true;
             }
+        }
+
+        private void tbStartWithWin_CheckedChanged(object sender, EventArgs e)
+        {
+            setStartup();
         }
     }
 }
