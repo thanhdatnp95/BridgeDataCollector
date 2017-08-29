@@ -1,5 +1,8 @@
 ﻿using System.Data;
+using System.ComponentModel;
+using System.Windows.Forms;
 using System;
+using System.Drawing;
 
 namespace NI_Data_Collector
 {
@@ -9,6 +12,10 @@ namespace NI_Data_Collector
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        private NotifyIcon notifyIcon;
+        private ContextMenu contextMenu;
+        private MenuItem menuItem1;
+        private MenuItem menuItem0;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -32,6 +39,7 @@ namespace NI_Data_Collector
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            
             this.tbSensorID = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbType = new System.Windows.Forms.TextBox();
@@ -75,6 +83,47 @@ namespace NI_Data_Collector
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
+            //
+            // notifyIcon
+            //
+            this.components = new System.ComponentModel.Container();
+            this.contextMenu = new System.Windows.Forms.ContextMenu();
+            this.menuItem0 = new System.Windows.Forms.MenuItem();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+
+            // Initialize menuItem1
+            this.menuItem1.Index = 1;
+            this.menuItem1.Text = "Exit";
+            this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
+
+            // Initialize menuItem0
+            this.menuItem0.Index = 0;
+            this.menuItem0.Text = "NI Sensor Data Collector";
+            this.menuItem0.DefaultItem = true;
+            this.menuItem0.Click += new System.EventHandler(this.menuItem0_Click);
+
+            // Initialize contextMenu1
+            this.contextMenu.MenuItems.AddRange(
+                        new System.Windows.Forms.MenuItem[] { this.menuItem0, new MenuItem("-"), this.menuItem1 });
+
+            // Create the NotifyIcon.
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+
+            // The Icon property sets the icon that will appear
+            // in the systray for this application.
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+
+            // The ContextMenu property sets the menu that will
+            // appear when the systray icon is right clicked.
+            this.notifyIcon.ContextMenu = this.contextMenu;
+
+            // The Text property sets the text that will be displayed,
+            // in a tooltip, when the mouse hovers over the systray icon.
+            this.notifyIcon.Text = "NI Sensor Data Collector";
+            this.notifyIcon.Visible = true;
+
+            // Handle the Click event to activate the form.
+            this.notifyIcon.Click += new System.EventHandler(this.notifyIcon1_Click);
             // 
             // tbSensorID
             // 

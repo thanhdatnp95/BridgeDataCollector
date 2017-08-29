@@ -79,9 +79,31 @@ namespace NI_Data_Collector
             tmr.Tick += new EventHandler(tmr_Tick);
             tmr.Start();
 
+            detectStartupArg();
+
             loadData();
             getStartupStatus();
             btStartStop_Click(this, new EventArgs());
+        }
+
+        void detectStartupArg()
+        {
+            string[] arg = Environment.GetCommandLineArgs();
+            
+            if (arg.Length < 2)
+            {
+                this.Visible = true;
+                return;
+            }
+
+            if (arg[1].Equals("-runminimized"))
+            {
+                this.Visible = false;
+            }
+            else
+            {
+                this.Visible = true;
+            }
         }
 
         private void tmr_Tick(object sender, EventArgs e)
@@ -393,9 +415,6 @@ namespace NI_Data_Collector
                     lstCtrlClient[nodeID].Close();
                     lstCtrlClient[nodeID] = null;
                 }
-
-                MessageBox.Show("Connect successful to node " + lstNode[nodeID].Name, "Connected",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch
             {
@@ -1086,18 +1105,28 @@ namespace NI_Data_Collector
 
             if (tbStartWithWin.Checked)
                 rk.SetValue(APPNAME, Path.GetDirectoryName(Application.ExecutablePath) + "\\" 
-                            + Path.GetFileName(Application.ExecutablePath));
+                            + Path.GetFileName(Application.ExecutablePath) + " -runminimized");
             else
                 rk.DeleteValue(APPNAME, false);
         }
 
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void notifyIcon1_Click(object Sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if (me.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                this.Visible = true;
+            }
+        }
+
+        private void menuItem1_Click(object Sender, EventArgs e)
         {
             if (btStartStop.Text.Equals("STOP"))
             {
                 MessageBox.Show("Please stop the system before closing application", "Stop First",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                e.Cancel = true;
+
+                this.Visible = true;
                 return;
             }
 
@@ -1107,15 +1136,32 @@ namespace NI_Data_Collector
             if (userChoice == DialogResult.Yes)
             {
                 storeData();
+                Application.Exit();
             }
             else if (userChoice == DialogResult.No)
             {
-                //Do nothing and exit
+                Application.Exit();
             }
             else
             {
-                e.Cancel = true;
+                return;
             }
+        }
+
+        private void menuItem0_Click(object Sender, EventArgs e)
+        {
+            this.Visible = true;
+        }
+
+        private void Form1_Closing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.ApplicationExitCall)
+            {
+                return;
+            }
+
+            this.Visible = false;
+            e.Cancel = true;
         }
 
         private void tbStartWithWin_CheckedChanged(object sender, EventArgs e)
