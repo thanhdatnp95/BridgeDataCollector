@@ -23,9 +23,9 @@ namespace NI_Data_Collector
         private BrightIdeasSoftware.TreeListView treeListView;
 
         private const int PORT_CTRL = 7777;
-        private string DATA_FILE = Path.GetDirectoryName(Application.ExecutablePath) + "\\data.txt";
-        private string AUTH_FILE = Path.GetDirectoryName(Application.ExecutablePath) + "\\HashData.txt";
-        private const string APPNAME = "DataCollector";
+        private string DATA_FILE = Path.GetDirectoryName(Application.ExecutablePath) + "\\data\\SensorInfo.txt";
+        private string AUTH_FILE = Path.GetDirectoryName(Application.ExecutablePath) + "\\data\\HashData.txt";
+        private const string APPNAME = "SensorDataCollector";
         private string outputDirectoy;
         private int timeout = 0;
         private int numOfNode = 0;
@@ -77,12 +77,11 @@ namespace NI_Data_Collector
             System.Windows.Forms.Timer tmr = new System.Windows.Forms.Timer();
             tmr.Interval = 1000;
             tmr.Tick += new EventHandler(tmr_Tick);
-            tmr.Start();
-
-            detectStartupArg();
+            tmr.Start();            
 
             loadData();
             getStartupStatus();
+            detectStartupArg();
             btStartStop_Click(this, new EventArgs());
         }
 
@@ -262,6 +261,7 @@ namespace NI_Data_Collector
                 tbDeletingPer.Text = string.Empty;
 
                 tbSensorID.Text = string.Empty;
+                tbChannelID.Text = string.Empty;
                 tbType.Text = string.Empty;
                 tbCalibFactor.Text = string.Empty;
                 tbTerMode.Text = string.Empty;
@@ -291,6 +291,7 @@ namespace NI_Data_Collector
                 tbDeletingPer.Text = selectedObject.DeletingPeriod.ToString();
 
                 tbSensorID.Text = string.Empty;
+                tbChannelID.Text = string.Empty;
                 tbType.Text = string.Empty;
                 tbCalibFactor.Text = string.Empty;
                 tbTerMode.Text = string.Empty;
@@ -318,6 +319,7 @@ namespace NI_Data_Collector
                 tbDeletingPer.Text = selectedObject.ParrentNode.DeletingPeriod.ToString();
 
                 tbSensorID.Text = selectedObject.ID;
+                tbChannelID.Text = selectedObject.Name;
                 tbType.Text = selectedObject.Type;
                 tbCalibFactor.Text = selectedObject.CalibFactor;
                 tbTerMode.Text = selectedObject.TerminalMode;
@@ -439,7 +441,8 @@ namespace NI_Data_Collector
                 }
                 catch
                 {
-                    MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
@@ -720,7 +723,7 @@ namespace NI_Data_Collector
                 lines.Add(string.Join(",", lstNode[i].Name, lstNode[i].NumOfChannel, lstNode[i].NumOfSensor, lstNode[i].SamplingFrequency,
                                            lstNode[i].SendingPeriod, lstNode[i].DeletingPeriod, lstNode[i].IPAddress));
                 for (int j = 0; j < lstNode[i].NumOfChannel; j++)
-                    lines.Add(string.Join(",", lstNode[i].lstChannel[j].ID, lstNode[i].lstChannel[j].Type,
+                    lines.Add(string.Join(",", lstNode[i].lstChannel[j].Name, lstNode[i].lstChannel[j].ID, lstNode[i].lstChannel[j].Type,
                                                lstNode[i].lstChannel[j].CalibFactor, lstNode[i].lstChannel[j].TerminalMode));
             }
             File.WriteAllLines(DATA_FILE, lines);
@@ -773,8 +776,8 @@ namespace NI_Data_Collector
                 {
                     i++;
                     lstParam = lines[i].Split(',');
-                    lstNode[lstNode.Count - 1].lstChannel.Add(new NodeData(lstNode[lstNode.Count - 1], "Channel " + j.ToString(),
-                                                                           lstParam[0], lstParam[1], Double.Parse(lstParam[2]), lstParam[3]));                
+                    lstNode[lstNode.Count - 1].lstChannel.Add(new NodeData(lstNode[lstNode.Count - 1], lstParam[0],
+                                                                           lstParam[1], lstParam[2], Double.Parse(lstParam[3]), lstParam[4]));                
                 }                
             }
             this.treeListView.Roots = lstNode;            
@@ -1059,6 +1062,7 @@ namespace NI_Data_Collector
                 else
                 {
                     selectedObject.ID = tbSensorID.Text;
+                    selectedObject.Name = tbChannelID.Text;
                     if (selectedObject.Type.Equals("Not Set") && !tbType.Text.Equals("Not Set"))
                     {
                         selectedObject.ParrentNode.NumOfSensor++;
@@ -1089,6 +1093,7 @@ namespace NI_Data_Collector
 
         private void getStartupStatus()
         {
+            /***************************************************************
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
                 ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
@@ -1096,10 +1101,24 @@ namespace NI_Data_Collector
                 tbStartWithWin.Checked = true;
             else
                 tbStartWithWin.Checked = false;
+            ***************************************************************/
+            string userName = Environment.UserName;
+            string startupConfigFile = "C:\\Users\\" + userName + "" +
+                                       "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\SensorDataCollector.vbs";
+
+            if (File.Exists(startupConfigFile))
+            {
+                tbStartWithWin.Checked = true;
+            }
+            else
+            {
+                tbStartWithWin.Checked = false;
+            }
         }
 
         private void setStartup()
         {
+            /**********************************************************************************
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
                 ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
@@ -1108,6 +1127,31 @@ namespace NI_Data_Collector
                             + Path.GetFileName(Application.ExecutablePath) + " -runminimized");
             else
                 rk.DeleteValue(APPNAME, false);
+            **********************************************************************************/
+            string userName = Environment.UserName;
+            string startupConfigFile = "C:\\Users\\" + userName + "" +
+                                       "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\SensorDataCollector.vbs";
+
+            if (File.Exists(startupConfigFile))
+            {
+                File.Delete(startupConfigFile);
+            }
+
+            // Run as startup
+            if (tbStartWithWin.Checked)
+            {
+                using (StreamWriter sw = File.CreateText(startupConfigFile))
+                {
+                    sw.WriteLine("Set WshShell = CreateObject(\"WScript.Shell\")");
+                    sw.WriteLine("WshShell.Run \"\"\"" + Path.GetDirectoryName(Application.ExecutablePath) + "\\"
+                                + Path.GetFileName(Application.ExecutablePath) + "\"\"\", 0");
+                    sw.WriteLine("Set WshShell = Nothing");
+                }
+            }
+            else
+            {
+                // Do nothing
+            }
         }
 
         private void notifyIcon1_Click(object Sender, EventArgs e)

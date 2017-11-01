@@ -38,8 +38,8 @@ namespace NI_Data_Collector
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            
             this.tbSensorID = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbType = new System.Windows.Forms.TextBox();
@@ -48,6 +48,8 @@ namespace NI_Data_Collector
             this.tbCalibFactor = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.panelChannel = new System.Windows.Forms.Panel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.tbChannelID = new System.Windows.Forms.TextBox();
             this.tbTerMode = new System.Windows.Forms.TextBox();
             this.panelNode = new System.Windows.Forms.Panel();
             this.tbNodeID = new System.Windows.Forms.TextBox();
@@ -78,56 +80,19 @@ namespace NI_Data_Collector
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.lbUser = new System.Windows.Forms.Label();
             this.tbStartWithWin = new System.Windows.Forms.CheckBox();
+            this.contextMenu = new System.Windows.Forms.ContextMenu();
+            this.menuItem0 = new System.Windows.Forms.MenuItem();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.panelChannel.SuspendLayout();
             this.panelNode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
-            //
-            // notifyIcon
-            //
-            this.components = new System.ComponentModel.Container();
-            this.contextMenu = new System.Windows.Forms.ContextMenu();
-            this.menuItem0 = new System.Windows.Forms.MenuItem();
-            this.menuItem1 = new System.Windows.Forms.MenuItem();
-
-            // Initialize menuItem1
-            this.menuItem1.Index = 1;
-            this.menuItem1.Text = "Exit";
-            this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
-
-            // Initialize menuItem0
-            this.menuItem0.Index = 0;
-            this.menuItem0.Text = "NI Sensor Data Collector";
-            this.menuItem0.DefaultItem = true;
-            this.menuItem0.Click += new System.EventHandler(this.menuItem0_Click);
-
-            // Initialize contextMenu1
-            this.contextMenu.MenuItems.AddRange(
-                        new System.Windows.Forms.MenuItem[] { this.menuItem0, new MenuItem("-"), this.menuItem1 });
-
-            // Create the NotifyIcon.
-            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-
-            // The Icon property sets the icon that will appear
-            // in the systray for this application.
-            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-
-            // The ContextMenu property sets the menu that will
-            // appear when the systray icon is right clicked.
-            this.notifyIcon.ContextMenu = this.contextMenu;
-
-            // The Text property sets the text that will be displayed,
-            // in a tooltip, when the mouse hovers over the systray icon.
-            this.notifyIcon.Text = "NI Sensor Data Collector";
-            this.notifyIcon.Visible = true;
-
-            // Handle the Click event to activate the form.
-            this.notifyIcon.Click += new System.EventHandler(this.notifyIcon1_Click);
             // 
             // tbSensorID
             // 
-            this.tbSensorID.Location = new System.Drawing.Point(80, 2);
+            this.tbSensorID.Location = new System.Drawing.Point(80, 34);
             this.tbSensorID.Margin = new System.Windows.Forms.Padding(2);
             this.tbSensorID.Name = "tbSensorID";
             this.tbSensorID.Size = new System.Drawing.Size(135, 22);
@@ -136,7 +101,7 @@ namespace NI_Data_Collector
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 6);
+            this.label1.Location = new System.Drawing.Point(2, 38);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 17);
@@ -145,7 +110,7 @@ namespace NI_Data_Collector
             // 
             // tbType
             // 
-            this.tbType.Location = new System.Drawing.Point(80, 32);
+            this.tbType.Location = new System.Drawing.Point(80, 64);
             this.tbType.Margin = new System.Windows.Forms.Padding(2);
             this.tbType.Name = "tbType";
             this.tbType.Size = new System.Drawing.Size(135, 22);
@@ -154,7 +119,7 @@ namespace NI_Data_Collector
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 36);
+            this.label2.Location = new System.Drawing.Point(2, 68);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 17);
@@ -164,7 +129,7 @@ namespace NI_Data_Collector
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(2, 79);
+            this.label3.Location = new System.Drawing.Point(2, 110);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(119, 17);
@@ -173,7 +138,7 @@ namespace NI_Data_Collector
             // 
             // tbCalibFactor
             // 
-            this.tbCalibFactor.Location = new System.Drawing.Point(119, 75);
+            this.tbCalibFactor.Location = new System.Drawing.Point(119, 106);
             this.tbCalibFactor.Margin = new System.Windows.Forms.Padding(2);
             this.tbCalibFactor.Name = "tbCalibFactor";
             this.tbCalibFactor.Size = new System.Drawing.Size(96, 22);
@@ -183,7 +148,7 @@ namespace NI_Data_Collector
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(2, 110);
+            this.label4.Location = new System.Drawing.Point(2, 141);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(102, 17);
@@ -194,6 +159,8 @@ namespace NI_Data_Collector
             // 
             this.panelChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelChannel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelChannel.Controls.Add(this.label13);
+            this.panelChannel.Controls.Add(this.tbChannelID);
             this.panelChannel.Controls.Add(this.tbTerMode);
             this.panelChannel.Controls.Add(this.label1);
             this.panelChannel.Controls.Add(this.tbSensorID);
@@ -206,12 +173,30 @@ namespace NI_Data_Collector
             this.panelChannel.Location = new System.Drawing.Point(864, 284);
             this.panelChannel.Margin = new System.Windows.Forms.Padding(2);
             this.panelChannel.Name = "panelChannel";
-            this.panelChannel.Size = new System.Drawing.Size(223, 139);
+            this.panelChannel.Size = new System.Drawing.Size(223, 169);
             this.panelChannel.TabIndex = 9;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 8);
+            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(77, 17);
+            this.label13.TabIndex = 13;
+            this.label13.Text = "Channel ID";
+            // 
+            // tbChannelID
+            // 
+            this.tbChannelID.Location = new System.Drawing.Point(80, 4);
+            this.tbChannelID.Margin = new System.Windows.Forms.Padding(4);
+            this.tbChannelID.Name = "tbChannelID";
+            this.tbChannelID.Size = new System.Drawing.Size(135, 22);
+            this.tbChannelID.TabIndex = 12;
             // 
             // tbTerMode
             // 
-            this.tbTerMode.Location = new System.Drawing.Point(119, 106);
+            this.tbTerMode.Location = new System.Drawing.Point(119, 138);
             this.tbTerMode.Margin = new System.Windows.Forms.Padding(2);
             this.tbTerMode.Name = "tbTerMode";
             this.tbTerMode.ReadOnly = true;
@@ -366,7 +351,7 @@ namespace NI_Data_Collector
             this.btStartStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btStartStop.Image = global::NI_Data_Collector.Properties.Resources.Start_icon;
             this.btStartStop.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btStartStop.Location = new System.Drawing.Point(16, 432);
+            this.btStartStop.Location = new System.Drawing.Point(16, 461);
             this.btStartStop.Margin = new System.Windows.Forms.Padding(2);
             this.btStartStop.Name = "btStartStop";
             this.btStartStop.Size = new System.Drawing.Size(98, 34);
@@ -431,7 +416,7 @@ namespace NI_Data_Collector
             this.mainPanel.Location = new System.Drawing.Point(16, 91);
             this.mainPanel.Margin = new System.Windows.Forms.Padding(4);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(831, 332);
+            this.mainPanel.Size = new System.Drawing.Size(831, 361);
             this.mainPanel.TabIndex = 18;
             // 
             // btApply
@@ -439,7 +424,7 @@ namespace NI_Data_Collector
             this.btApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btApply.Cursor = System.Windows.Forms.Cursors.Default;
             this.btApply.Enabled = false;
-            this.btApply.Location = new System.Drawing.Point(1015, 429);
+            this.btApply.Location = new System.Drawing.Point(1010, 459);
             this.btApply.Margin = new System.Windows.Forms.Padding(2);
             this.btApply.Name = "btApply";
             this.btApply.Size = new System.Drawing.Size(72, 26);
@@ -466,7 +451,7 @@ namespace NI_Data_Collector
             // 
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(134, 442);
+            this.label12.Location = new System.Drawing.Point(134, 471);
             this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(116, 17);
@@ -476,7 +461,7 @@ namespace NI_Data_Collector
             // tbDirectory
             // 
             this.tbDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbDirectory.Location = new System.Drawing.Point(242, 438);
+            this.tbDirectory.Location = new System.Drawing.Point(242, 466);
             this.tbDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.tbDirectory.Name = "tbDirectory";
             this.tbDirectory.Size = new System.Drawing.Size(166, 22);
@@ -486,7 +471,7 @@ namespace NI_Data_Collector
             // btBrowse
             // 
             this.btBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btBrowse.Location = new System.Drawing.Point(415, 438);
+            this.btBrowse.Location = new System.Drawing.Point(415, 466);
             this.btBrowse.Margin = new System.Windows.Forms.Padding(2);
             this.btBrowse.Name = "btBrowse";
             this.btBrowse.Size = new System.Drawing.Size(72, 26);
@@ -534,9 +519,7 @@ namespace NI_Data_Collector
             // 
             this.tbStartWithWin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.tbStartWithWin.AutoSize = true;
-            this.tbStartWithWin.Checked = true;
-            this.tbStartWithWin.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tbStartWithWin.Location = new System.Drawing.Point(16, 472);
+            this.tbStartWithWin.Location = new System.Drawing.Point(16, 501);
             this.tbStartWithWin.Margin = new System.Windows.Forms.Padding(2);
             this.tbStartWithWin.Name = "tbStartWithWin";
             this.tbStartWithWin.Size = new System.Drawing.Size(120, 21);
@@ -545,11 +528,38 @@ namespace NI_Data_Collector
             this.tbStartWithWin.UseVisualStyleBackColor = true;
             this.tbStartWithWin.CheckedChanged += new System.EventHandler(this.tbStartWithWin_CheckedChanged);
             // 
+            // contextMenu
+            // 
+            this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem0,
+            this.menuItem1});
+            // 
+            // menuItem0
+            // 
+            this.menuItem0.DefaultItem = true;
+            this.menuItem0.Index = 0;
+            this.menuItem0.Text = "Sensor Data Collector";
+            this.menuItem0.Click += new System.EventHandler(this.menuItem0_Click);
+            // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 1;
+            this.menuItem1.Text = "Exit";
+            this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
+            // 
+            // notifyIcon
+            // 
+            this.notifyIcon.ContextMenu = this.contextMenu;
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "Sensor Data Collector";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.Click += new System.EventHandler(this.notifyIcon1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1104, 496);
+            this.ClientSize = new System.Drawing.Size(1104, 525);
             this.Controls.Add(this.tbStartWithWin);
             this.Controls.Add(this.lbUser);
             this.Controls.Add(this.pictureBox2);
@@ -571,11 +581,11 @@ namespace NI_Data_Collector
             this.Controls.Add(this.panelChannel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(248, 193);
+            this.MinimumSize = new System.Drawing.Size(248, 191);
             this.Name = "Form1";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "NI Sensor Data Collector";
+            this.Text = "Sensor Data Collector";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_Closing);
             this.panelChannel.ResumeLayout(false);
             this.panelChannel.PerformLayout();
@@ -626,6 +636,8 @@ namespace NI_Data_Collector
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label lbUser;
         private System.Windows.Forms.CheckBox tbStartWithWin;
+        private Label label13;
+        private TextBox tbChannelID;
     }
 }
 

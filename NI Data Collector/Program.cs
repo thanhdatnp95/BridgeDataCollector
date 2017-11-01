@@ -18,7 +18,7 @@ namespace NI_Data_Collector
         static void Main()
         {
             bool result;
-            var mutex = new System.Threading.Mutex(true, "NICollector", out result);
+            var mutex = new System.Threading.Mutex(true, "SensorDataCollector", out result);
 
             if (!result)
             {
