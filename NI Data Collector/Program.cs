@@ -6,6 +6,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace NI_Data_Collector
 {

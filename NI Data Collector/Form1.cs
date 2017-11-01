@@ -50,8 +50,14 @@ namespace NI_Data_Collector
         private List<NetworkStream> lstFileStream;
         private List<NetworkStream> lstStatusStream;
 
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
+        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public Form1(string user)
         {
+            // Log info
+            log.Info("START PROGRAM");
+
             InitializeComponent();
             lbUser.Text = user;
             initTable();
@@ -422,6 +428,9 @@ namespace NI_Data_Collector
             {
                 MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Log error
+                log.Error("Cannot connect to node " + lstNode[nodeID].Name);
             }
         }
 
@@ -884,6 +893,10 @@ namespace NI_Data_Collector
                             continue;
                         }                        
                         addNode(nodeID, numberOfChannels, 0, samplingFrequency, sendingPeriod, deletingPeriod, ipAddress);
+                        // Log info
+                        log.Info("Added a node: " + nodeID + "(" + ipAddress + " - " + numberOfChannels.ToString() +
+                                  " Channels - " + samplingFrequency.ToString() + " Hz - " + sendingPeriod + " - " +
+                                  deletingPeriod.ToString() + ")");
                         break;
                     }
                     catch
@@ -1201,6 +1214,7 @@ namespace NI_Data_Collector
         {
             if (e.CloseReason == CloseReason.ApplicationExitCall)
             {
+                log.Info("EXIT PROGRAM");
                 return;
             }
 
