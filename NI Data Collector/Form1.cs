@@ -854,6 +854,9 @@ namespace NI_Data_Collector
             if (dialogBrowse.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 tbDirectory.Text = dialogBrowse.SelectedPath;
+
+                // Store data to file after changing output directory
+                storeData();
             }
         }
       
@@ -893,6 +896,10 @@ namespace NI_Data_Collector
                             continue;
                         }                        
                         addNode(nodeID, numberOfChannels, 0, samplingFrequency, sendingPeriod, deletingPeriod, ipAddress);
+
+                        // Store data to file after adding a node
+                        storeData();
+
                         // Log info
                         log.Info("Added a node: " + nodeID + "(" + ipAddress + " - " + numberOfChannels.ToString() +
                                   " Channels - " + samplingFrequency.ToString() + " Hz - " + sendingPeriod + " - " +
@@ -902,12 +909,11 @@ namespace NI_Data_Collector
                     catch
                     {
                         MessageBox.Show("Invalid values", "Invalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    }                    
                 }
                 else
                     break;
-            }
-                  
+            }                  
         }
 
         private void btRemove_Click(object sender, EventArgs e)
@@ -937,6 +943,9 @@ namespace NI_Data_Collector
                 tbSamplingFreq.Text = string.Empty;
                 tbSendingPer.Text = string.Empty;
                 tbDeletingPer.Text = string.Empty;
+
+                // Store data to file after removing a node
+                storeData();
             }            
         }
 
@@ -1097,6 +1106,9 @@ namespace NI_Data_Collector
                                     " of node " + selectedObject.ParrentNode.Name, "Success",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+
+                // Store data to file after applying changes
+                storeData();
             }
             catch
             {
@@ -1187,16 +1199,14 @@ namespace NI_Data_Collector
                 return;
             }
 
-            // Display a MsgBox asking the user to save changes or abort.
-            DialogResult userChoice = MessageBox.Show("Do you want to save changes to configuration file?", "Exit?",
-                                                      MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            // Display a MsgBox asking the user for confirming exiting application.
+            DialogResult userChoice = MessageBox.Show("Do you want to exit application?", "Exit?",
+                                                      MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (userChoice == DialogResult.Yes)
             {
+                // Store data to file before exiting
                 storeData();
-                Application.Exit();
-            }
-            else if (userChoice == DialogResult.No)
-            {
+
                 Application.Exit();
             }
             else
