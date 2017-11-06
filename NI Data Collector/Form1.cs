@@ -1,19 +1,14 @@
 ﻿using System;
-using Microsoft.Win32;
-using System.IO;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace NI_Data_Collector
 {
@@ -363,6 +358,9 @@ namespace NI_Data_Collector
 
         private void connectToDevice(int nodeID)
         {
+            // Log info
+            log.Info("Connecting to " + lstNode[nodeID].Name + "...");
+
             string message;
 
             try
@@ -423,19 +421,25 @@ namespace NI_Data_Collector
                     lstCtrlClient[nodeID].Close();
                     lstCtrlClient[nodeID] = null;
                 }
+
+                // Log info
+                log.Info("Connected successfully to " + lstNode[nodeID].Name + ".");
             }
             catch
             {
-                MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                 // Log error
-                log.Error("Cannot connect to node " + lstNode[nodeID].Name);
+                log.Error("Failed to connect to node " + lstNode[nodeID].Name + ".");
+
+                MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);                
             }
         }
 
         private void disconnectToDevice(int nodeID)
         {
+            // Log info
+            log.Info("Disconnecting from " + lstNode[nodeID].Name + "...");
+
             if (lstNode[nodeID].State.Equals("Connected"))
             {
                 try
@@ -446,10 +450,16 @@ namespace NI_Data_Collector
 
                     String message = "STOP";
 
-                    sendMessage(message, lstCtrlStream[nodeID]);                                      
+                    sendMessage(message, lstCtrlStream[nodeID]);
+
+                    // Log info
+                    log.Info("Disconnected successfully from " + lstNode[nodeID].Name + ".");
                 }
                 catch
                 {
+                    // Log error
+                    log.Error("Failed to disconnect from node " + lstNode[nodeID].Name + ".");
+
                     MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -514,7 +524,7 @@ namespace NI_Data_Collector
             if (lstNode.All(node => !node.IsActive))
             {
                 setButtonText("START");
-                btStartStop.Image = global::NI_Data_Collector.Properties.Resources.Start_icon;          
+                btStartStop.Image = global::NI_Data_Collector.Properties.Resources.Start_icon;             
             }                
         }
 
@@ -545,12 +555,22 @@ namespace NI_Data_Collector
                     if (timer.ElapsedMilliseconds > timeout)
                     {
                         timer.Restart();
+                        if (lstNode[nodeID].State == "Connected")
+                        {
+                            // Log warning
+                            log.Warn("Node " + lstNode[nodeID].Name + " is disconnected.");
+                        }
                         lstNode[nodeID].State = "Disconnected";
                         this.treeListView.UpdateObject(lstNode[nodeID]);
                     }
                     if (lstFileListener[nodeID].Pending())
                     {
                         timer.Restart();
+                        if (lstNode[nodeID].State == "Disconnected")
+                        {
+                            // Log info
+                            log.Info("Node " + lstNode[nodeID].Name + " is reconnected.");
+                        }
                         lstNode[nodeID].State = "Connected";
                         this.treeListView.UpdateObject(lstNode[nodeID]);
 
@@ -588,6 +608,9 @@ namespace NI_Data_Collector
                     lstFileClient[nodeID].Close();
                     lstFileClient[nodeID] = null;
                 }
+
+                // Log warning
+                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.");
 
                 MessageBox.Show("Connection to node " + lstNode[nodeID].Name + " is terminated", "Disconnected",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -632,6 +655,9 @@ namespace NI_Data_Collector
             }
             catch
             {
+                // Log warning
+                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.");
+
                 MessageBox.Show("Connection to node " + lstNode[nodeID].Name + " is terminated", "Disconnected",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -652,11 +678,21 @@ namespace NI_Data_Collector
                     if (timer.ElapsedMilliseconds > timeout)
                     {
                         timer.Restart();
-                        lstNode[nodeID].State = "Disconnected";
+                        if (lstNode[nodeID].State == "Connected")
+                        {
+                            // Log warning
+                            log.Warn("Node " + lstNode[nodeID].Name + " is disconnected.");
+                        }
+                        lstNode[nodeID].State = "Disconnected";                        
                     }
                     if (lstStatusListener[nodeID].Pending())
                     {
                         timer.Restart();
+                        if (lstNode[nodeID].State == "Disconnected")
+                        {
+                            // Log info
+                            log.Info("Node " + lstNode[nodeID].Name + " is reconnected.");
+                        }
                         lstNode[nodeID].State = "Connected";
 
                         lstStatusClient[nodeID] = lstStatusListener[nodeID].AcceptTcpClient();
@@ -717,6 +753,9 @@ namespace NI_Data_Collector
             }
             catch
             {
+                // Log warning
+                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.");
+
                 MessageBox.Show("Connection to node " + lstNode[nodeID].Name + " is terminated", "Disconnected",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -741,7 +780,13 @@ namespace NI_Data_Collector
         private void loadData()
         {
             if (!File.Exists(DATA_FILE))
+            {
+                // Log error
+                log.Error("Failed to load data from file.");
+
                 return;
+            }
+                
             string[] lines = File.ReadAllLines(DATA_FILE);
             int numOfChannels;
             
@@ -789,7 +834,10 @@ namespace NI_Data_Collector
                                                                            lstParam[1], lstParam[2], Double.Parse(lstParam[3]), lstParam[4]));                
                 }                
             }
-            this.treeListView.Roots = lstNode;            
+            this.treeListView.Roots = lstNode;
+
+            // log info
+            log.Info("Loaded data successfully from file.");
         }
 
         string calculateMD5(string input)
@@ -855,6 +903,9 @@ namespace NI_Data_Collector
             {
                 tbDirectory.Text = dialogBrowse.SelectedPath;
 
+                // Log info
+                log.Info("Changed output directory into \"" + dialogBrowse.SelectedPath + "\".");
+
                 // Store data to file after changing output directory
                 storeData();
             }
@@ -901,9 +952,9 @@ namespace NI_Data_Collector
                         storeData();
 
                         // Log info
-                        log.Info("Added a node: " + nodeID + "(" + ipAddress + " - " + numberOfChannels.ToString() +
+                        log.Info("Added a node: " + nodeID + " (" + ipAddress + " - " + numberOfChannels.ToString() +
                                   " Channels - " + samplingFrequency.ToString() + " Hz - " + sendingPeriod + " - " +
-                                  deletingPeriod.ToString() + ")");
+                                  deletingPeriod.ToString() + ").");
                         break;
                     }
                     catch
@@ -931,6 +982,13 @@ namespace NI_Data_Collector
 
             if (userChoice == DialogResult.Yes)
             {
+                string nodeID = selectedObject.Name;
+                string ipAddress = selectedObject.IPAddress;
+                int numberOfChannels = selectedObject.NumOfChannel;
+                int samplingFrequency = selectedObject.SamplingFrequency;
+                int sendingPeriod = selectedObject.SendingPeriod;
+                int deletingPeriod = selectedObject.DeletingPeriod;
+
                 removeNode(selectedObject);
 
                 btRemove.Enabled = false;
@@ -946,6 +1004,11 @@ namespace NI_Data_Collector
 
                 // Store data to file after removing a node
                 storeData();
+
+                // Log info
+                log.Info("Removed a node: " + nodeID + " (" + ipAddress + " - " + numberOfChannels.ToString() +
+                          " Channels - " + samplingFrequency.ToString() + " Hz - " + sendingPeriod + " - " +
+                          deletingPeriod.ToString() + ").");
             }            
         }
 
@@ -953,8 +1016,14 @@ namespace NI_Data_Collector
         {
             if (btStartStop.Text.Equals("START"))
             {
+                // Log info
+                log.Info("Initializing connections...");
+
                 if (tbDirectory.Text.Equals(string.Empty))
                 {
+                    // Log warning
+                    log.Warn("Failed to initialize connections - No output directory.");
+
                     MessageBox.Show("Please choose folder to store data first", "Browse directory first",
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -966,6 +1035,9 @@ namespace NI_Data_Collector
                 }
                 catch
                 {
+                    // Log warning
+                    log.Warn("Failed to initialize connections - Invalid output directory.");
+
                     MessageBox.Show("Output directory is not valid", "Invalid", MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
                     return;
@@ -973,6 +1045,9 @@ namespace NI_Data_Collector
 
                 if (lstNode == null || lstNode.Count < 1)
                 {
+                    // Log warning
+                    log.Warn("Failed to initialize connections - No node is found.");
+
                     MessageBox.Show("There is nothing to start. Please add node first", "No node",
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -988,6 +1063,8 @@ namespace NI_Data_Collector
             }
             else
             {
+                // Log info
+                log.Info("Closing connections...");
                 if (login() == 1)
                 {
                     for (int i = 0; i < lstNode.Count; i++)
@@ -997,7 +1074,12 @@ namespace NI_Data_Collector
                         lstCtrlThread[i].IsBackground = true;
                         lstCtrlThread[i].Start();
                     }
-                }                               
+                }
+                else
+                {
+                    // Log warning
+                    log.Warn("Failed to close connections - Login failed.");
+                }
             }
         }
 
@@ -1076,7 +1158,10 @@ namespace NI_Data_Collector
                         lstNode[i].SendingPeriod = selectedObject.SendingPeriod;
                         lstNode[i].DeletingPeriod = selectedObject.DeletingPeriod;
                         this.treeListView.UpdateObject(lstNode[i]);
-                    }                        
+                    }
+
+                    // Log info
+                    log.Info("Updated infomation for node " + selectedObject.Name + ".");
 
                     MessageBox.Show("Updated infomation successfully for node " + selectedObject.Name,
                                     "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1101,6 +1186,9 @@ namespace NI_Data_Collector
                     selectedObject.TerminalMode = tbTerMode.Text;
                     this.treeListView.UpdateObject(selectedObject.ParrentNode);
                     lbNumOfSensor.Text = "Sensor: " + numOfSensor.ToString();
+
+                    // Log info
+                    log.Info("Updated infomation for " + selectedObject.Name + " of node " + selectedObject.ParrentNode.Name + ".");
 
                     MessageBox.Show("Updated infomation successfully for " + selectedObject.Name +
                                     " of node " + selectedObject.ParrentNode.Name, "Success",
@@ -1172,10 +1260,16 @@ namespace NI_Data_Collector
                                 + Path.GetFileName(Application.ExecutablePath) + "\"\"\", 0");
                     sw.WriteLine("Set WshShell = Nothing");
                 }
+
+                // Log info
+                log.Info("Set program to run at startup.");
             }
             else
             {
                 // Do nothing
+
+                // Log info
+                log.Info("Set program not to run at startup.");
             }
         }
 
@@ -1224,6 +1318,7 @@ namespace NI_Data_Collector
         {
             if (e.CloseReason == CloseReason.ApplicationExitCall)
             {
+                // Log info
                 log.Info("EXIT PROGRAM");
                 return;
             }
