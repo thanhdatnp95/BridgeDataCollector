@@ -18,6 +18,7 @@ namespace NI_Data_Collector
         private BrightIdeasSoftware.TreeListView treeListView;
 
         private const int PORT_CTRL = 7777;
+        private string DATA_PATH = Path.GetDirectoryName(Application.ExecutablePath) + "\\data";
         private string DATA_FILE = Path.GetDirectoryName(Application.ExecutablePath) + "\\data\\SensorInfo.txt";
         private string AUTH_FILE = Path.GetDirectoryName(Application.ExecutablePath) + "\\data\\HashData.txt";
         private const string APPNAME = "SensorDataCollector";
@@ -763,6 +764,8 @@ namespace NI_Data_Collector
 
         private void storeData()
         {
+            Directory.CreateDirectory(DATA_PATH);
+
             List<string> lines = new List<string>();
 
             lines.Add(tbDirectory.Text);
