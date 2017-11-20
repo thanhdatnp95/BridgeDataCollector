@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net.Appender;
+using log4net.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -426,10 +428,13 @@ namespace NI_Data_Collector
                 // Log info
                 log.Info("Connected successfully to " + lstNode[nodeID].Name + ".");
             }
-            catch
+            catch (Exception e)
             {
                 // Log error
-                log.Error("Failed to connect to node " + lstNode[nodeID].Name + ".");
+                log.Error("Failed to connect to node " + lstNode[nodeID].Name + ".\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          e.ToString() + "\n" +
+                          "================================================================\n");
 
                 MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);                
@@ -456,10 +461,13 @@ namespace NI_Data_Collector
                     // Log info
                     log.Info("Disconnected successfully from " + lstNode[nodeID].Name + ".");
                 }
-                catch
+                catch (Exception e)
                 {
                     // Log error
-                    log.Error("Failed to disconnect from node " + lstNode[nodeID].Name + ".");
+                    log.Error("Failed to disconnect from node " + lstNode[nodeID].Name + ".\n\n" +
+                              "====================== DETAIL INFORMATION ======================\n" +
+                              e.ToString() + "\n" +
+                              "================================================================\n");
 
                     MessageBox.Show("Cannot connect to node " + lstNode[nodeID].Name, "Failed",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -558,8 +566,8 @@ namespace NI_Data_Collector
                         timer.Restart();
                         if (lstNode[nodeID].State == "Connected")
                         {
-                            // Log warning
-                            log.Warn("Node " + lstNode[nodeID].Name + " is disconnected.");
+                            // Log error
+                            log.Error("Node " + lstNode[nodeID].Name + " is disconnected - Timeout.");
                         }
                         lstNode[nodeID].State = "Disconnected";
                         this.treeListView.UpdateObject(lstNode[nodeID]);
@@ -569,8 +577,8 @@ namespace NI_Data_Collector
                         timer.Restart();
                         if (lstNode[nodeID].State == "Disconnected")
                         {
-                            // Log info
-                            log.Info("Node " + lstNode[nodeID].Name + " is reconnected.");
+                            // Log warn
+                            log.Warn("Node " + lstNode[nodeID].Name + " is reconnected.");
                         }
                         lstNode[nodeID].State = "Connected";
                         this.treeListView.UpdateObject(lstNode[nodeID]);
@@ -595,7 +603,7 @@ namespace NI_Data_Collector
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 if (lstFileStream[nodeID] != null)
                 {
@@ -611,7 +619,10 @@ namespace NI_Data_Collector
                 }
 
                 // Log warning
-                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.");
+                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          e.ToString() + "\n" +
+                          "================================================================\n");
 
                 MessageBox.Show("Connection to node " + lstNode[nodeID].Name + " is terminated", "Disconnected",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -654,10 +665,13 @@ namespace NI_Data_Collector
                 }
                 File.WriteAllBytes(filePath, receiveData);
             }
-            catch
+            catch (Exception e)
             {
                 // Log warning
-                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.");
+                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          e.ToString() + "\n" +
+                          "================================================================\n");
 
                 MessageBox.Show("Connection to node " + lstNode[nodeID].Name + " is terminated", "Disconnected",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -681,8 +695,11 @@ namespace NI_Data_Collector
                         timer.Restart();
                         if (lstNode[nodeID].State == "Connected")
                         {
-                            // Log warning
-                            log.Warn("Node " + lstNode[nodeID].Name + " is disconnected.");
+                            // Log error
+                            log.Error("Node " + lstNode[nodeID].Name + " is disconnected.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "Timeout\n" +
+                          "================================================================\n");
                         }
                         lstNode[nodeID].State = "Disconnected";                        
                     }
@@ -691,8 +708,8 @@ namespace NI_Data_Collector
                         timer.Restart();
                         if (lstNode[nodeID].State == "Disconnected")
                         {
-                            // Log info
-                            log.Info("Node " + lstNode[nodeID].Name + " is reconnected.");
+                            // Log warn
+                            log.Warn("Node " + lstNode[nodeID].Name + " is reconnected.");
                         }
                         lstNode[nodeID].State = "Connected";
 
@@ -752,10 +769,13 @@ namespace NI_Data_Collector
 
                 this.treeListView.UpdateObject(lstNode[nodeID]);
             }
-            catch
+            catch (Exception e)
             {
-                // Log warning
-                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.");
+                // Log warn
+                log.Warn("Connection to node " + lstNode[nodeID].Name + " is terminated.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          e.ToString() + "\n" +
+                          "================================================================\n");
 
                 MessageBox.Show("Connection to node " + lstNode[nodeID].Name + " is terminated", "Disconnected",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -785,7 +805,10 @@ namespace NI_Data_Collector
             if (!File.Exists(DATA_FILE))
             {
                 // Log error
-                log.Error("Failed to load data from file.");
+                log.Error("Failed to load data from file.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "File is not exist\n" +
+                          "================================================================\n");
 
                 return;
             }
@@ -873,6 +896,12 @@ namespace NI_Data_Collector
             {
                 if (!File.Exists(filePath))
                 {
+                    // Long warning
+                    log.Warn("Login failed.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "No data file is exist\n" +
+                          "================================================================\n");
+
                     MessageBox.Show("Username or Password is invalid", "Invalid",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return 0;
@@ -888,7 +917,13 @@ namespace NI_Data_Collector
                 if (i < lines.Length)
                 {
                     return 1;
-                }                    
+                }
+
+                // Log warning
+                log.Warn("Login failed.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "Username or Password is incorrect\n" +
+                          "================================================================\n");
 
                 MessageBox.Show("Username or Password is invalid", "Invalid",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -918,6 +953,9 @@ namespace NI_Data_Collector
         {
             if (btStartStop.Text.Equals("STOP"))
             {
+                // Log warning
+                log.Warn("Try to add a node when the system is running.");
+
                 MessageBox.Show("Please stop the system before adding a node", "Stop First",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -974,6 +1012,9 @@ namespace NI_Data_Collector
         {
             if (btStartStop.Text.Equals("STOP"))
             {
+                // Log warning
+                log.Warn("Try to remove a node when the system is running.");
+
                 MessageBox.Show("Please stop the system before removing a node", "Stop First",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -1025,7 +1066,10 @@ namespace NI_Data_Collector
                 if (tbDirectory.Text.Equals(string.Empty))
                 {
                     // Log warning
-                    log.Warn("Failed to initialize connections - No output directory.");
+                    log.Warn("Failed to initialize connections.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "No output directory is specified\n" +
+                          "================================================================\n");
 
                     MessageBox.Show("Please choose folder to store data first", "Browse directory first",
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1036,10 +1080,13 @@ namespace NI_Data_Collector
                     outputDirectoy = tbDirectory.Text;
                     System.IO.Directory.CreateDirectory(outputDirectoy);
                 }
-                catch
+                catch (Exception ex)
                 {
                     // Log warning
-                    log.Warn("Failed to initialize connections - Invalid output directory.");
+                    log.Warn("Failed to initialize connections.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          ex.ToString() + "\n" +
+                          "================================================================\n");
 
                     MessageBox.Show("Output directory is not valid", "Invalid", MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
@@ -1049,7 +1096,10 @@ namespace NI_Data_Collector
                 if (lstNode == null || lstNode.Count < 1)
                 {
                     // Log warning
-                    log.Warn("Failed to initialize connections - No node is found.");
+                    log.Warn("Failed to initialize connections.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "No node is found\n" +
+                          "================================================================\n");
 
                     MessageBox.Show("There is nothing to start. Please add node first", "No node",
                                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1081,7 +1131,10 @@ namespace NI_Data_Collector
                 else
                 {
                     // Log warning
-                    log.Warn("Failed to close connections - Login failed.");
+                    log.Warn("Failed to close connections.\n\n" +
+                          "====================== DETAIL INFORMATION ======================\n" +
+                          "Login failed\n" +
+                          "================================================================\n");
                 }
             }
         }
@@ -1289,6 +1342,9 @@ namespace NI_Data_Collector
         {
             if (btStartStop.Text.Equals("STOP"))
             {
+                // Log warning
+                log.Warn("Try to close application when the system is running.");
+
                 MessageBox.Show("Please stop the system before closing application", "Stop First",
                                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -1321,8 +1377,26 @@ namespace NI_Data_Collector
         {
             if (e.CloseReason == CloseReason.ApplicationExitCall)
             {
-                // Log info
-                log.Info("EXIT PROGRAM");
+                // Log warning
+                log.Warn("EXIT PROGRAM");
+                return;
+            }
+            else if (e.CloseReason == CloseReason.TaskManagerClosing)
+            {
+                // Log warning
+                log.Warn("PROGRAM IS TERMINATED BY TASK MANAGER");
+                return;
+            }
+            else if (e.CloseReason == CloseReason.WindowsShutDown)
+            {
+                // Log warning
+                log.Warn("PROGRAM IS TERMINATED BY SYSTEM (SHUTDOWN)");
+                return;
+            }
+            else if (e.CloseReason == CloseReason.None)
+            {
+                // Log warning
+                log.Warn("PROGRAM IS TERMINATED BY UNKNOWN REASON");
                 return;
             }
 
