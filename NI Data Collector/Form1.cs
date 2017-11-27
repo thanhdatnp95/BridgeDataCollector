@@ -567,7 +567,10 @@ namespace NI_Data_Collector
                         if (lstNode[nodeID].State == "Connected")
                         {
                             // Log error
-                            log.Error("Node " + lstNode[nodeID].Name + " is disconnected - Timeout.");
+                            log.Error("Node " + lstNode[nodeID].Name + " is disconnected." +
+                                      "====================== DETAIL INFORMATION ======================\n" +
+                                      "Timeout\n" +
+                                      "================================================================\n");
                         }
                         lstNode[nodeID].State = "Disconnected";
                         this.treeListView.UpdateObject(lstNode[nodeID]);
